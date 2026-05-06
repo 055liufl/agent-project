@@ -11,7 +11,4 @@
     "github-triage": false,
     "github-pr-search": false,
   },
-  "plugin": [
-    "./opencode/plugins/llm-io-logger/index.ts"
-  ],
 }
