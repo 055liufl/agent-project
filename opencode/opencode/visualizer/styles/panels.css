@@ -1,0 +1,20 @@
+/* ===== System Prompt Panel ===== */
+
+.system-panel {
+  flex: 1;
+}
+
+.system-content {
+  padding: 10px;
+}
+
+.system-content .code-block {
+  font-size: 11px;
+}
+
+/* ===== Badge variants ===== */
+
+.badge-green {
+  color: var(--accent-green) !important;
+  background: rgba(5, 150, 105, 0.08) !important;
+}

@@ -1,0 +1,123 @@
+/* ===== Tool History Panel ===== */
+
+.tool-panel .panel-scroll {
+  padding: 4px;
+}
+
+.tool-item {
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+  transition: background 0.1s ease;
+}
+
+.tool-item + .tool-item {
+  margin-top: 2px;
+}
+
+.tool-highlighted {
+  background: rgba(217, 119, 6, 0.06);
+}
+
+.tool-item-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  text-align: left;
+  transition: background 0.1s ease;
+  color: var(--text-primary);
+}
+
+.tool-item-header:hover {
+  background: rgba(217, 119, 6, 0.06);
+}
+
+.tool-index {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  min-width: 18px;
+}
+
+.tool-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-orange);
+}
+
+.tool-duration {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--accent-cyan);
+  background: rgba(6, 182, 212, 0.08);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.tool-output-size {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+.tool-time {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+.tool-arrow {
+  font-size: 10px;
+  color: var(--text-muted);
+  width: 12px;
+  text-align: center;
+}
+
+/* Tool detail */
+.tool-detail {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.tool-section {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.tool-section-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.tool-code {
+  font-size: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.tool-result-code {
+  max-height: 300px;
+}
+
+.tool-code::-webkit-scrollbar {
+  width: 4px;
+}
+
+.tool-code::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+}

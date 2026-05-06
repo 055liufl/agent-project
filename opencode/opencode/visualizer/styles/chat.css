@@ -1,0 +1,122 @@
+/* ===== Chat History Panel ===== */
+
+.chat-panel .panel-scroll {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chat-item {
+  transition: background 0.1s ease;
+  border-radius: var(--radius-sm);
+}
+
+.chat-highlighted {
+  background: rgba(3, 105, 161, 0.06);
+}
+
+/* ===== Chat Bubbles ===== */
+
+.chat-bubble {
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid transparent;
+}
+
+.chat-user {
+  border-left-color: var(--accent-purple);
+  background: rgba(124, 58, 237, 0.04);
+}
+
+.chat-assistant {
+  border-left-color: var(--accent-cyan);
+  background: rgba(6, 182, 212, 0.03);
+}
+
+.chat-output {
+  border-left-color: var(--accent-green);
+  background: rgba(5, 150, 105, 0.04);
+}
+
+.chat-bubble-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.chat-role {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #fff;
+}
+
+.role-user { background: var(--accent-purple); }
+.role-assistant { background: var(--accent-cyan); }
+.role-output { background: var(--accent-green); }
+
+.chat-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  background: rgba(0, 0, 0, 0.04);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.chat-time {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+.chat-bubble-body {
+  font-size: 12px;
+  line-height: 1.5;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.chat-bubble-body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chat-bubble-body::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+}
+
+/* Messages block */
+.messages-block {
+  border: 1px solid rgba(3, 105, 161, 0.08);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.messages-block-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.messages-block .chat-bubble {
+  border-radius: 0;
+  border-left-width: 2px;
+}
+
+.chat-text-part {
+  max-height: 150px;
+  overflow-y: auto;
+}
