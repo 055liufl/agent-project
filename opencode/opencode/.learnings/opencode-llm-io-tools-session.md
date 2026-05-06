@@ -593,16 +593,16 @@ flowchart TD
 
     D5 --> E --> F
 
-    style A fill:#e1f5fe,stroke:#0288d1
-    style B5 fill:#fff9c4,stroke:#f9a825
-    style B6 fill:#ffccbc,stroke:#e64a19
-    style B7 fill:#ffccbc,stroke:#e64a19
-    style C5 fill:#fff9c4,stroke:#f9a825
-    style C6 fill:#ffccbc,stroke:#e64a19
-    style C7 fill:#ffccbc,stroke:#e64a19
-    style C8 fill:#ffccbc,stroke:#e64a19
-    style D5 fill:#fff9c4,stroke:#f9a825
-    style E fill:#c8e6c9,stroke:#2e7d32
+    style A fill:#e1f5fe,stroke:#0288d1,color:#0d1117
+    style B5 fill:#fff9c4,stroke:#f9a825,color:#0d1117
+    style B6 fill:#ffccbc,stroke:#e64a19,color:#0d1117
+    style B7 fill:#ffccbc,stroke:#e64a19,color:#0d1117
+    style C5 fill:#fff9c4,stroke:#f9a825,color:#0d1117
+    style C6 fill:#ffccbc,stroke:#e64a19,color:#0d1117
+    style C7 fill:#ffccbc,stroke:#e64a19,color:#0d1117
+    style C8 fill:#ffccbc,stroke:#e64a19,color:#0d1117
+    style D5 fill:#fff9c4,stroke:#f9a825,color:#0d1117
+    style E fill:#c8e6c9,stroke:#2e7d32,color:#0d1117
 ```
 
 ### 3.2 Messages 数组增长图（核心机制）
@@ -636,10 +636,10 @@ flowchart LR
     Round1 -- "+2条<br/>(tool_call + tool_result)" --> Round2
     Round2 -- "+2条<br/>(3×tool_call + 3×tool_result)" --> Round3
 
-    style M2_3 fill:#fff3e0,stroke:#f57c00
-    style M2_4 fill:#fff3e0,stroke:#f57c00
-    style M3_5 fill:#fce4ec,stroke:#c62828
-    style M3_6 fill:#fce4ec,stroke:#c62828
+    style M2_3 fill:#fff3e0,stroke:#f57c00,color:#0d1117
+    style M2_4 fill:#fff3e0,stroke:#f57c00,color:#0d1117
+    style M3_5 fill:#fce4ec,stroke:#c62828,color:#0d1117
+    style M3_6 fill:#fce4ec,stroke:#c62828,color:#0d1117
 ```
 
 ### 3.3 Agent Loop 决策流程
@@ -666,12 +666,12 @@ flowchart TD
     DECIDE2 -- "否" --> NO2 --> TOOL2 --> DECIDE3
     DECIDE3 -- "是" --> YES3 --> OUTPUT
 
-    style NO1 fill:#ffcdd2
-    style NO2 fill:#ffcdd2
-    style YES3 fill:#c8e6c9
-    style TOOL1 fill:#fff3e0
-    style TOOL2 fill:#fff3e0
-    style OUTPUT fill:#e1f5fe
+    style NO1 fill:#ffcdd2,color:#0d1117
+    style NO2 fill:#ffcdd2,color:#0d1117
+    style YES3 fill:#c8e6c9,color:#0d1117
+    style TOOL1 fill:#fff3e0,color:#0d1117
+    style TOOL2 fill:#fff3e0,color:#0d1117
+    style OUTPUT fill:#e1f5fe,color:#0d1117
 ```
 
 ---

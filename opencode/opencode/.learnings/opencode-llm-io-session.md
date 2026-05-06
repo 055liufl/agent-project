@@ -281,20 +281,20 @@ flowchart TD
     F --> G
     G --> H
 
-    style A fill:#e1f5fe,stroke:#0288d1
-    style B fill:#fff3e0,stroke:#f57c00
-    style C fill:#fce4ec,stroke:#c62828
-    style D1 fill:#f3e5f5,stroke:#7b1fa2
-    style D2 fill:#f3e5f5,stroke:#7b1fa2
-    style D3 fill:#f3e5f5,stroke:#7b1fa2
-    style D4 fill:#f3e5f5,stroke:#7b1fa2
-    style E1 fill:#e8f5e9,stroke:#2e7d32
-    style E2 fill:#e8f5e9,stroke:#2e7d32
-    style E3 fill:#e8f5e9,stroke:#2e7d32
-    style E4 fill:#e8f5e9,stroke:#2e7d32
-    style F fill:#fff9c4,stroke:#f9a825
-    style G fill:#e0f7fa,stroke:#00838f
-    style H fill:#e1f5fe,stroke:#0288d1
+    style A fill:#e1f5fe,stroke:#0288d1,color:#0d1117
+    style B fill:#fff3e0,stroke:#f57c00,color:#0d1117
+    style C fill:#fce4ec,stroke:#c62828,color:#0d1117
+    style D1 fill:#f3e5f5,stroke:#7b1fa2,color:#0d1117
+    style D2 fill:#f3e5f5,stroke:#7b1fa2,color:#0d1117
+    style D3 fill:#f3e5f5,stroke:#7b1fa2,color:#0d1117
+    style D4 fill:#f3e5f5,stroke:#7b1fa2,color:#0d1117
+    style E1 fill:#e8f5e9,stroke:#2e7d32,color:#0d1117
+    style E2 fill:#e8f5e9,stroke:#2e7d32,color:#0d1117
+    style E3 fill:#e8f5e9,stroke:#2e7d32,color:#0d1117
+    style E4 fill:#e8f5e9,stroke:#2e7d32,color:#0d1117
+    style F fill:#fff9c4,stroke:#f9a825,color:#0d1117
+    style G fill:#e0f7fa,stroke:#00838f,color:#0d1117
+    style H fill:#e1f5fe,stroke:#0288d1,color:#0d1117
 ```
 
 ### 3.2 日志类型流程（聚焦日志记录时机）
@@ -314,13 +314,13 @@ flowchart LR
     L1 --> L2 --> L3
     L1 --> L4 --> L5 --> L6 --> L7
 
-    style L1 fill:#bbdefb
-    style L2 fill:#e1bee7
-    style L3 fill:#e1bee7
-    style L4 fill:#c8e6c9
-    style L5 fill:#c8e6c9
-    style L6 fill:#c8e6c9
-    style L7 fill:#ffecb3
+    style L1 fill:#bbdefb,color:#0d1117
+    style L2 fill:#e1bee7,color:#0d1117
+    style L3 fill:#e1bee7,color:#0d1117
+    style L4 fill:#c8e6c9,color:#0d1117
+    style L5 fill:#c8e6c9,color:#0d1117
+    style L6 fill:#c8e6c9,color:#0d1117
+    style L7 fill:#ffecb3,color:#0d1117
 ```
 
 ### 3.3 决策流程（LLM 收到请求后的处理路径）
@@ -344,12 +344,12 @@ flowchart TD
     DIRECT --> OUTPUT
     TOOLCALL --> TOOLRESULT["tool_result 返回"] --> CONTINUE["继续推理或输出"]
 
-    style START fill:#e3f2fd
-    style NOTOOL fill:#c8e6c9
-    style OUTPUT fill:#fff9c4
-    style TOOLCALL fill:#ffcdd2
-    style TOOLRESULT fill:#ffcdd2
-    style CONTINUE fill:#ffcdd2
+    style START fill:#e3f2fd,color:#0d1117
+    style NOTOOL fill:#c8e6c9,color:#0d1117
+    style OUTPUT fill:#fff9c4,color:#0d1117
+    style TOOLCALL fill:#ffcdd2,color:#0d1117
+    style TOOLRESULT fill:#ffcdd2,color:#0d1117
+    style CONTINUE fill:#ffcdd2,color:#0d1117
 ```
 
 ---
