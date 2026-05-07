@@ -1,53 +1,46 @@
 import { useState } from "react"
-import type { LogEntry, LLMRound } from "../types"
+import type { ToolCall } from "../types"
 import { formatTimestamp, calcDuration } from "../parser"
 
 interface Props {
-  round: LLMRound | null
-  selectedEntry: LogEntry | null
+  toolCalls: ToolCall[]
 }
 
-export default function ToolHistoryPanel({ round }: Props) {
+export default function ToolInvocationsPanel({ toolCalls }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
-
-  const toolCalls = round?.toolCalls ?? []
 
   return (
     <div className="panel tool-panel">
       <div className="panel-header">
-        <span className="panel-title">Tool History</span>
-        <span className="panel-badge">
-          {toolCalls.length} call{toolCalls.length !== 1 ? "s" : ""}
-        </span>
+        <span className="panel-icon">&#x1F527;</span>
+        <span className="panel-title">Tool Invocations</span>
+        <span className="panel-count">{toolCalls.length} call(s)</span>
       </div>
       <div className="panel-scroll">
         {toolCalls.length === 0 && (
-          <div className="panel-empty">No tool calls in this round</div>
+          <div className="panel-empty">No tool calls</div>
         )}
         {toolCalls.map((tc, i) => {
-          const isExpanded = expandedId === tc.callID
-          const duration = tc.after
-            ? calcDuration(tc.before.ts, tc.after.ts)
-            : "..."
+          const isOpen = expandedId === tc.callID
+          const duration = tc.after ? calcDuration(tc.before.ts, tc.after.ts) : "..."
           const outputLen = tc.after?.result.output.length ?? 0
 
           return (
             <div key={tc.callID} className="tool-item">
               <button
                 className="tool-item-header"
-                onClick={() => setExpandedId(isExpanded ? null : tc.callID)}
+                onClick={() => setExpandedId(isOpen ? null : tc.callID)}
               >
                 <span className="tool-index">#{i + 1}</span>
                 <span className="tool-name">{tc.tool}</span>
                 <span className="tool-duration">{duration}</span>
-                <span className="tool-output-size">
-                  {outputLen > 0 ? `${outputLen.toLocaleString()} chars` : ""}
-                </span>
+                {outputLen > 0 && (
+                  <span className="tool-size">{outputLen.toLocaleString()} chars</span>
+                )}
                 <span className="tool-time">{formatTimestamp(tc.before.ts)}</span>
-                <span className="tool-arrow">{isExpanded ? "\u25BE" : "\u25B8"}</span>
+                <span className="tool-arrow">{isOpen ? "\u25BE" : "\u25B8"}</span>
               </button>
-
-              {isExpanded && (
+              {isOpen && (
                 <div className="tool-detail">
                   <div className="tool-section">
                     <div className="tool-section-label">ARGS</div>
@@ -57,9 +50,7 @@ export default function ToolHistoryPanel({ round }: Props) {
                   </div>
                   {tc.after && (
                     <div className="tool-section">
-                      <div className="tool-section-label">
-                        RESULT — {tc.after.result.title}
-                      </div>
+                      <div className="tool-section-label">RESULT — {tc.after.result.title}</div>
                       <pre className="code-block tool-code tool-result-code">
                         {tc.after.result.output}
                       </pre>

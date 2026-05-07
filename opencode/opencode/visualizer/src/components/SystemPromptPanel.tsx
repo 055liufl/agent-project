@@ -1,34 +1,44 @@
-import type { LogEntry, LLMRound } from "../types"
+import { useState } from "react"
+import type { SystemPromptEntry } from "../types"
 
 interface Props {
-  round: LLMRound | null
-  selectedEntry: LogEntry | null
+  prompts: SystemPromptEntry[]
 }
 
-export default function SystemPromptPanel({ round }: Props) {
-  if (!round?.systemPrompt) {
-    return (
-      <div className="panel system-panel">
-        <div className="panel-header">
-          <span className="panel-title">System Prompts</span>
-        </div>
-        <div className="panel-empty">No system prompt for this round</div>
-      </div>
-    )
-  }
+export default function SystemPromptPanel({ prompts }: Props) {
+  const [expandedIdx, setExpandedIdx] = useState<number | null>(
+    prompts.length > 0 ? prompts.length - 1 : null
+  )
 
-  const sp = round.systemPrompt
-  const totalChars = sp.system.reduce((s, t) => s + t.length, 0)
+  const toggle = (i: number) => setExpandedIdx(expandedIdx === i ? null : i)
 
   return (
     <div className="panel system-panel">
       <div className="panel-header">
+        <span className="panel-icon">&#x1F4CB;</span>
         <span className="panel-title">System Prompts</span>
-        <span className="panel-badge">{totalChars.toLocaleString()} chars</span>
-        <span className="panel-badge">~{Math.round(totalChars / 4).toLocaleString()} tokens</span>
+        <span className="panel-count">{prompts.length} prompt(s)</span>
       </div>
-      <div className="system-content panel-scroll">
-        <pre className="code-block">{sp.system.join("\n\n---\n\n")}</pre>
+      <div className="panel-scroll">
+        {prompts.length === 0 && <div className="panel-empty">No system prompts</div>}
+        {prompts.map((sp, i) => {
+          const chars = sp.system.reduce((s, t) => s + t.length, 0)
+          const isOpen = expandedIdx === i
+          return (
+            <div key={i} className="prompt-item">
+              <button className="prompt-header" onClick={() => toggle(i)}>
+                <span className="prompt-arrow">{isOpen ? "\u25BE" : "\u25B8"}</span>
+                <span className="prompt-label">Prompt {i + 1}</span>
+                <span className="prompt-chars">{chars.toLocaleString()} chars</span>
+              </button>
+              {isOpen && (
+                <div className="prompt-body">
+                  <pre className="code-block">{sp.system.join("\n\n---\n\n")}</pre>
+                </div>
+              )}
+            </div>
+          )
+        })}
       </div>
     </div>
   )

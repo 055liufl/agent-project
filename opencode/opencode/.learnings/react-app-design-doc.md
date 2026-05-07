@@ -1,6 +1,6 @@
 # OpenCode LLM Session Visualizer — Design Doc
 
-> 基于 `react-app-ui.png` 设计图实现的三栏面板布局，支持 back/fwd 在同一 JSONL 文件里切换不同 LLM Round。
+> 基于 `react-app-ui-2.png` 参考设计实现。
 
 ---
 
@@ -8,72 +8,78 @@
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│  title  │  ◀ Round 2/3 ▶  │  Session/Events/Duration  │ [Open] │
-├─────────┼─────────────────┬┴─────────────────────────────────────┤
-│         │                 │  Chat History (without tool)         │
-│ Log List│                 │  当前 round 的 messages 文本部分      │
-│ Panel   │ System Prompts  │  + llm_text_output (MD 渲染)         │
-│         │                 ├──────────────────────────────────────┤
-│ 可收缩   │ 当前 round 的   │  Tool History (just tool)            │
-│ 点击高亮 │ system prompt   │  当前 round 的 tool_call 配对         │
-│         │                 │  可展开 args + result                │
-├─────────┴─────────────────┴──────────────────────────────────────┤
-│  Sysprompt ~Xk tokens | Chat ~Xk tokens | Round tools | ...     │
-└──────────────────────────────────────────────────────────────────┘
+│  OpenCode Visualizer  ed81e38c  │ ◀ Turn 1/1 ▶ │ 02:54 SISYPHUS│
+├──────────┬───────────────────────┬───────────────────────────────┤
+│          │  System Prompts  2p   │  Chat History  2msg 2txt     │
+│ Log Files│  ▸ Prompt 1   57c    │  [USER] Sisyphus             │
+│          │  ▾ Prompt 2 1,508c   │  当前有哪些 skills            │
+│ [拖放区]  │    <agent-identity>  │  [ASSISTANT] Sisyphus        │
+│          │    You are Sisyphus.. │  当前可用的 skills 如下:      │
+│ ed81e38c │    ...                │  (Markdown 表格渲染)          │
+│ 1edc72cd │                      ├───────────────────────────────┤
+│ 2998a376 │                      │  Tool Invocations     0 call  │
+│          │                      │                               │
+├──────────┴───────────────────────┴───────────────────────────────┤
 ```
 
-**核心交互**：Header 中的 `◀ back` / `▶ fwd` 按钮切换当前 Round，中间/右上/右下三个面板内容随之联动更新。
-
-CSS Grid: `grid-template-columns: 260px 1fr 1fr`，收缩时 `36px 1fr 1fr`。
+Grid: `150px 1fr 1fr`，无 Status Bar。
 
 ---
 
-## 二、数据流
+## 二、核心交互
 
-```
-JSONL → parseJSONL() → LogEntry[]
-       → groupIntoTurns() → Turn[] (每个 Turn 含 LLMRound[])
-       → flatMap rounds → allRounds[]
-       → currentRoundIdx 选择当前 round
-       → 三个面板各自渲染 currentRound 的对应数据
-```
-
-| 面板 | 数据源 | 渲染内容 |
-|------|--------|---------|
-| **System Prompts** (中) | `round.systemPrompt` | 纯文本 + chars/tokens 统计 |
-| **Chat History** (右上) | `round.messages`(仅 text parts) + `round.output` | Markdown 渲染 |
-| **Tool History** (右下) | `round.toolCalls[]` | 按 callID 配对，可展开 args/result |
-| **Log List** (左) | 全部 entries | 完整日志列表，点击高亮 |
-| **Status Bar** (底) | 当前 round 统计 + 全局统计 | tokens / tools / duration |
+| 交互 | 行为 |
+|------|------|
+| 左侧拖放/点击添加 | 加载多个 JSONL 文件到文件列表 |
+| 点击文件列表项 | 切换当前活跃文件，重置 Turn 为第 1 个 |
+| Header ◀▶ | 在当前文件的不同 Turn 之间切换 |
+| System Prompt ▸/▾ | 折叠/展开单个 prompt（独立） |
+| Tool Invocations 行 | 展开查看 args + result |
 
 ---
 
-## 三、文件结构
+## 三、数据流
+
+```
+JSONL files[] → 每个文件独立 parseJSONL → groupIntoTurns
+activeFileIdx → 当前文件的 turns[]
+currentTurnIdx → 当前 turn 的 rounds[]
+  → System Prompts: 所有 rounds 的 systemPrompt 收集
+  → Chat History: 最后一个 round 的 messages(仅 text) + output
+  → Tool Invocations: 所有 rounds 的 toolCalls 聚合
+```
+
+---
+
+## 四、文件结构
 
 ```
 opencode/visualizer/
 ├── src/
 │   ├── main.tsx, App.tsx, types.ts, parser.ts
 │   └── components/
-│       ├── Header.tsx           # + ◀▶ Round 导航
-│       ├── LogListPanel.tsx     # 左侧可收缩日志列表
-│       ├── SystemPromptPanel.tsx # 接收 round prop
-│       ├── ChatHistoryPanel.tsx  # 接收 round prop
-│       ├── ToolHistoryPanel.tsx  # 接收 round prop
-│       ├── StatusBar.tsx        # 接收 currentRound prop
+│       ├── Header.tsx              # turnID + Turn导航 + 时间 + Agent标签
+│       ├── FileListPanel.tsx       # 拖放 + 文件列表
+│       ├── SystemPromptPanel.tsx   # 折叠式 Prompt 1/2/...
+│       ├── ChatHistoryPanel.tsx    # 角色标签(USER绿/ASSISTANT蓝) + MD渲染
+│       ├── ToolInvocationsPanel.tsx # 工具调用列表
 │       └── MarkdownView.tsx
 └── styles/
-    ├── global.css, header.css (含 round-nav)
-    ├── log-list.css, panels.css, chat.css, tool.css
-    ├── statusbar.css, markdown.css
+    ├── global.css       # 白底主题 + Grid
+    ├── header.css       # 含 Agent 绿色标签
+    ├── file-list.css    # 拖放区 + 文件项
+    ├── panels.css       # System Prompt 折叠
+    ├── chat.css         # 气泡 + 角色标签
+    ├── tool.css         # Tool 列表
+    └── markdown.css
 ```
 
 ---
 
-## 四、技术栈
+## 五、技术栈
 
 Vite 6 + React 18 + TypeScript 5 + react-markdown 9 + remark-gfm 4 + react-syntax-highlighter 15
 
 ---
 
-*2026-05-06*
+*2026-05-07*

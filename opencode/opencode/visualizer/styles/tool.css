@@ -1,21 +1,11 @@
-/* ===== Tool History Panel ===== */
+/* ===== Tool Invocations Panel ===== */
 
 .tool-panel .panel-scroll {
   padding: 4px;
 }
 
-.tool-item {
-  border-radius: var(--radius-xs);
-  overflow: hidden;
-  transition: background 0.1s ease;
-}
-
 .tool-item + .tool-item {
-  margin-top: 2px;
-}
-
-.tool-highlighted {
-  background: rgba(217, 119, 6, 0.06);
+  margin-top: 1px;
 }
 
 .tool-item-header {
@@ -23,52 +13,52 @@
   align-items: center;
   gap: 6px;
   width: 100%;
-  padding: 6px 8px;
+  padding: 6px 10px;
   border: none;
-  background: rgba(0, 0, 0, 0.02);
+  background: transparent;
   border-radius: var(--radius-xs);
   cursor: pointer;
   font-family: var(--font-sans);
+  font-size: 12px;
   text-align: left;
-  transition: background 0.1s ease;
-  color: var(--text-primary);
+  color: var(--text);
+  transition: background 0.1s;
 }
 
 .tool-item-header:hover {
-  background: rgba(217, 119, 6, 0.06);
+  background: #f8fafc;
 }
 
 .tool-index {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
   color: var(--text-muted);
   min-width: 18px;
 }
 
 .tool-name {
-  font-size: 11px;
   font-weight: 700;
-  color: var(--accent-orange);
+  color: var(--orange);
 }
 
 .tool-duration {
   font-family: var(--font-mono);
   font-size: 10px;
-  color: var(--accent-cyan);
-  background: rgba(6, 182, 212, 0.08);
+  color: var(--accent);
+  background: #f0f9ff;
   padding: 1px 5px;
   border-radius: 3px;
 }
 
-.tool-output-size {
+.tool-size {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
   color: var(--text-muted);
 }
 
 .tool-time {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
   color: var(--text-muted);
   margin-left: auto;
 }
@@ -76,17 +66,14 @@
 .tool-arrow {
   font-size: 10px;
   color: var(--text-muted);
-  width: 12px;
-  text-align: center;
 }
 
-/* Tool detail */
 .tool-detail {
-  padding: 8px;
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  border-top: 1px solid rgba(0, 0, 0, 0.04);
+  border-top: 1px solid var(--panel-border);
 }
 
 .tool-section {
@@ -96,10 +83,10 @@
 }
 
 .tool-section-label {
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   color: var(--text-muted);
 }
 
@@ -113,11 +100,5 @@
   max-height: 300px;
 }
 
-.tool-code::-webkit-scrollbar {
-  width: 4px;
-}
-
-.tool-code::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 2px;
-}
+.tool-code::-webkit-scrollbar { width: 4px; }
+.tool-code::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }

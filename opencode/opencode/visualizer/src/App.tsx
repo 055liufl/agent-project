@@ -2,81 +2,150 @@ import { useState, useCallback } from "react"
 import type { Turn, LogEntry, LLMRound } from "./types"
 import { parseJSONL, groupIntoTurns } from "./parser"
 import Header from "./components/Header"
-import LogListPanel from "./components/LogListPanel"
+import FileListPanel from "./components/FileListPanel"
 import SystemPromptPanel from "./components/SystemPromptPanel"
 import ChatHistoryPanel from "./components/ChatHistoryPanel"
-import ToolHistoryPanel from "./components/ToolHistoryPanel"
-import StatusBar from "./components/StatusBar"
+import ToolInvocationsPanel from "./components/ToolInvocationsPanel"
+
+export interface ChatItem {
+  role: "user" | "assistant"
+  agent: string
+  text: string
+}
+
+interface LoadedFile {
+  name: string
+  turns: Turn[]
+  entries: LogEntry[]
+}
+
+function buildChatItems(
+  turn: Turn | null,
+  round: LLMRound | null,
+  agentShort: string,
+): ChatItem[] {
+  if (!turn) return []
+  const items: ChatItem[] = []
+
+  // 1. User input — always from this turn's own user_message (NOT the
+  //    cumulative messages snapshot which includes prior turns' history)
+  if (turn.userMessage) {
+    const text = turn.userMessage.parts
+      .filter((p) => p.type === "text" && p.text)
+      .map((p) => p.text)
+      .join("\n\n")
+    if (text) items.push({ role: "user", agent: agentShort, text })
+  }
+
+  // 2. Assistant output — only if the current round produced final text
+  if (round?.output) {
+    items.push({ role: "assistant", agent: agentShort, text: round.output.text })
+  }
+
+  return items
+}
 
 export default function App() {
-  const [turns, setTurns] = useState<Turn[]>([])
-  const [allEntries, setAllEntries] = useState<LogEntry[]>([])
-  const [fileName, setFileName] = useState("")
-  const [selectedEntry, setSelectedEntry] = useState<LogEntry | null>(null)
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [files, setFiles] = useState<LoadedFile[]>([])
+  const [activeFileIdx, setActiveFileIdx] = useState(0)
   const [currentRoundIdx, setCurrentRoundIdx] = useState(0)
 
-  const handleFileLoad = useCallback((name: string, content: string) => {
-    const entries = parseJSONL(content)
-    const grouped = groupIntoTurns(entries)
-    setAllEntries(entries)
-    setTurns(grouped)
-    setFileName(name)
-    setSelectedEntry(null)
-    setCurrentRoundIdx(0)
-  }, [])
-
-  // Flatten all rounds across turns
-  const allRounds: LLMRound[] = turns.flatMap((t) => t.rounds)
+  const activeFile = files[activeFileIdx] ?? null
+  const allEntries = activeFile?.entries ?? []
+  const allRounds: LLMRound[] = (activeFile?.turns ?? []).flatMap((t) => t.rounds)
   const totalRounds = allRounds.length
   const currentRound = allRounds[currentRoundIdx] ?? null
 
-  const goBack = () => setCurrentRoundIdx((i) => Math.max(0, i - 1))
-  const goFwd = () => setCurrentRoundIdx((i) => Math.min(totalRounds - 1, i + 1))
+  // Find which turn the current round belongs to
+  let currentTurn: Turn | null = null
+  if (activeFile) {
+    let idx = 0
+    for (const t of activeFile.turns) {
+      if (currentRoundIdx >= idx && currentRoundIdx < idx + t.rounds.length) {
+        currentTurn = t
+        break
+      }
+      idx += t.rounds.length
+    }
+    if (!currentTurn) currentTurn = activeFile.turns[0] ?? null
+  }
+
+  const agentShort = (currentTurn?.agent ?? "").split(" - ").pop() ?? ""
+
+  // === All 3 content panels derive from currentRound ===
+  const systemPrompts = currentRound?.systemPrompt ? [currentRound.systemPrompt] : []
+  const chatItems = buildChatItems(currentTurn, currentRound, agentShort)
+  const roundToolCalls = currentRound?.toolCalls ?? []
+
+  // === File management ===
+  const handleAddFile = useCallback((name: string, content: string) => {
+    const entries = parseJSONL(content)
+    const grouped = groupIntoTurns(entries)
+    setFiles((prev) => {
+      const exists = prev.findIndex((f) => f.name === name)
+      if (exists >= 0) {
+        const updated = [...prev]
+        updated[exists] = { name, turns: grouped, entries }
+        return updated
+      }
+      return [...prev, { name, turns: grouped, entries }]
+    })
+    setActiveFileIdx(() => {
+      const existIdx = files.findIndex((f) => f.name === name)
+      return existIdx >= 0 ? existIdx : files.length
+    })
+    setCurrentRoundIdx(0)
+  }, [files])
+
+  const handleSelectFile = useCallback((idx: number) => {
+    setActiveFileIdx(idx)
+    setCurrentRoundIdx(0)
+  }, [])
+
+  // === Round navigation ===
+  const goPrev = () => setCurrentRoundIdx((i) => Math.max(0, i - 1))
+  const goNext = () => setCurrentRoundIdx((i) => Math.min(totalRounds - 1, i + 1))
 
   return (
     <div className="app">
       <div className="app-bg" />
+
       <Header
-        fileName={fileName}
-        onFileLoad={handleFileLoad}
-        turns={turns}
-        entries={allEntries}
+        turnId={currentTurn?.turnID ?? ""}
+        agent={currentTurn?.agent ?? ""}
+        startTime={currentTurn?.startTime ?? ""}
         currentRoundIdx={currentRoundIdx}
         totalRounds={totalRounds}
-        onBack={goBack}
-        onFwd={goFwd}
+        onPrev={goPrev}
+        onNext={goNext}
       />
 
-      {allEntries.length === 0 ? (
-        <main className="empty-state">
-          <div className="empty-state-icon">&#x1F52C;</div>
-          <h2>OpenCode Session Visualizer</h2>
-          <p>打开一个 <code>.jsonl</code> 日志文件以查看 LLM 会话的完整输入输出流程</p>
-          <p className="empty-hint">日志文件位于 <code>logs/&lt;sessionID&gt;/&lt;turnID&gt;.jsonl</code></p>
-        </main>
-      ) : (
-        <main className={`workspace ${sidebarOpen ? "" : "sidebar-collapsed"}`}>
-          <LogListPanel
-            entries={allEntries}
-            selectedEntry={selectedEntry}
-            onSelect={setSelectedEntry}
-            open={sidebarOpen}
-            onToggle={() => setSidebarOpen(!sidebarOpen)}
-          />
-          <div className="center-panel">
-            <SystemPromptPanel round={currentRound} selectedEntry={selectedEntry} />
-          </div>
-          <div className="right-panel">
-            <ChatHistoryPanel round={currentRound} selectedEntry={selectedEntry} />
-            <ToolHistoryPanel round={currentRound} selectedEntry={selectedEntry} />
-          </div>
-        </main>
-      )}
+      <main className="workspace">
+        <FileListPanel
+          files={files.map((f) => f.name)}
+          activeIdx={activeFileIdx}
+          onSelect={handleSelectFile}
+          onAddFile={handleAddFile}
+        />
 
-      {allEntries.length > 0 && (
-        <StatusBar entries={allEntries} turns={turns} currentRound={currentRound} />
-      )}
+        <div className="center-panel">
+          <SystemPromptPanel
+            key={`sp-${activeFileIdx}-${currentRoundIdx}`}
+            prompts={systemPrompts}
+          />
+        </div>
+
+        <div className="right-panel">
+          <ChatHistoryPanel
+            key={`ch-${activeFileIdx}-${currentRoundIdx}`}
+            chatItems={chatItems}
+          />
+          <ToolInvocationsPanel
+            key={`ti-${activeFileIdx}-${currentRoundIdx}`}
+            toolCalls={roundToolCalls}
+          />
+        </div>
+      </main>
     </div>
   )
 }

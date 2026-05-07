@@ -41,7 +41,9 @@ export default function MarkdownView({ content }: MarkdownViewProps) {
             )
           },
         }}
-      />
+      >
+        {content}
+      </ReactMarkdown>
     </div>
   )
 }

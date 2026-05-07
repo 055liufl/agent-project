@@ -1,0 +1,100 @@
+/* ===== File List Panel (Left Sidebar) ===== */
+
+.file-list-panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--panel-bg);
+  border-right: 1px solid var(--panel-border);
+  overflow: hidden;
+  min-height: 0;
+}
+
+.file-list-header {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.file-list-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Drop zone */
+.file-drop-zone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px;
+  padding: 10px 8px;
+  border: 1px dashed #cbd5e1;
+  border-radius: var(--radius-sm);
+  background: #f8fafc;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.file-drop-zone:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: #f0f9ff;
+}
+
+/* File items */
+.file-list-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.file-list-items::-webkit-scrollbar { width: 4px; }
+.file-list-items::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 7px 10px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--text);
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.file-item:hover {
+  background: #f1f5f9;
+}
+
+.file-item.active {
+  background: var(--blue-bg);
+  color: var(--accent-dark);
+  font-weight: 600;
+}
+
+.file-item + .file-item {
+  margin-top: 1px;
+}
+
+.file-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}

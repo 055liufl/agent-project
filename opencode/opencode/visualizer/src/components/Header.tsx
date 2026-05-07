@@ -1,100 +1,43 @@
-import { useRef } from "react"
-import type { Turn, LogEntry } from "../types"
-import { calcDuration } from "../parser"
+import { formatTimestamp } from "../parser"
 
-interface HeaderProps {
-  fileName: string
-  onFileLoad: (name: string, content: string) => void
-  turns: Turn[]
-  entries: LogEntry[]
+interface Props {
+  turnId: string
+  agent: string
+  startTime: string
   currentRoundIdx: number
   totalRounds: number
-  onBack: () => void
-  onFwd: () => void
+  onPrev: () => void
+  onNext: () => void
 }
 
 export default function Header({
-  fileName, onFileLoad, turns, entries,
-  currentRoundIdx, totalRounds, onBack, onFwd,
-}: HeaderProps) {
-  const inputRef = useRef<HTMLInputElement>(null)
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => onFileLoad(file.name, reader.result as string)
-    reader.readAsText(file)
-    e.target.value = ""
-  }
-
-  const sessionID = turns[0]?.sessionID ?? ""
-  const duration = turns.length > 0
-    ? calcDuration(turns[0].startTime, turns[turns.length - 1].endTime)
-    : ""
-
+  turnId, agent, startTime,
+  currentRoundIdx, totalRounds, onPrev, onNext,
+}: Props) {
   return (
     <header className="header">
       <div className="header-left">
-        <span className="header-logo">&#x1F52C;</span>
-        <h1 className="header-title">Session Visualizer</h1>
+        <h1 className="header-title">OpenCode Visualizer</h1>
+        {turnId && <code className="header-turn-id">{turnId}</code>}
       </div>
 
       {totalRounds > 0 && (
-        <div className="round-nav">
-          <button
-            className="nav-btn"
-            onClick={onBack}
-            disabled={currentRoundIdx <= 0}
-            title="Previous message"
-          >
+        <div className="turn-nav">
+          <button className="nav-btn" onClick={onPrev} disabled={currentRoundIdx <= 0}>
             &#x25C0;
           </button>
           <span className="nav-label">
             Round {currentRoundIdx + 1} / {totalRounds}
           </span>
-          <button
-            className="nav-btn"
-            onClick={onFwd}
-            disabled={currentRoundIdx >= totalRounds - 1}
-            title="Next message"
-          >
+          <button className="nav-btn" onClick={onNext} disabled={currentRoundIdx >= totalRounds - 1}>
             &#x25B6;
           </button>
         </div>
       )}
 
-      <div className="header-meta">
-        {sessionID && (
-          <>
-            <span className="meta-chip">
-              <span className="meta-label">Session</span>
-              <code>{sessionID.replace("ses_", "").slice(0, 12)}...</code>
-            </span>
-            <span className="meta-chip">
-              <span className="meta-label">Events</span>
-              <code>{entries.length}</code>
-            </span>
-            <span className="meta-chip">
-              <span className="meta-label">Duration</span>
-              <code>{duration}</code>
-            </span>
-          </>
-        )}
-      </div>
-
       <div className="header-right">
-        {fileName && <span className="header-filename">{fileName}</span>}
-        <button className="header-btn" onClick={() => inputRef.current?.click()}>
-          Open .jsonl
-        </button>
-        <input
-          ref={inputRef}
-          type="file"
-          accept=".jsonl,.json"
-          style={{ display: "none" }}
-          onChange={handleChange}
-        />
+        {startTime && <span className="header-time">{formatTimestamp(startTime)}</span>}
+        {agent && <span className="header-agent">{agent.split(" - ").pop()}</span>}
       </div>
     </header>
   )

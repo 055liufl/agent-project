@@ -1,79 +1,49 @@
-import type { LogEntry, LLMRound, MessagesEntry } from "../types"
-import { formatTimestamp } from "../parser"
 import MarkdownView from "./MarkdownView"
 
-interface Props {
-  round: LLMRound | null
-  selectedEntry: LogEntry | null
+interface ChatItem {
+  role: "user" | "assistant"
+  agent: string
+  text: string
 }
 
-export default function ChatHistoryPanel({ round }: Props) {
-  if (!round) {
-    return (
-      <div className="panel chat-panel">
-        <div className="panel-header">
-          <span className="panel-title">Chat History</span>
-        </div>
-        <div className="panel-empty">No data</div>
-      </div>
-    )
-  }
+interface Props {
+  chatItems: ChatItem[]
+}
 
-  const msgs = round.messages as MessagesEntry | undefined
-  // Filter to messages with text parts only (no tool/tool_result)
-  const chatMsgs = msgs?.messages.filter((m) =>
-    m.parts.some((p) => p.type === "text" && p.text)
-  ) ?? []
+export default function ChatHistoryPanel({ chatItems }: Props) {
+  const msgCount = chatItems.length
+  const textPartCount = chatItems.length
 
   return (
     <div className="panel chat-panel">
       <div className="panel-header">
+        <span className="panel-icon">&#x1F4AC;</span>
         <span className="panel-title">Chat History</span>
-        <span className="panel-badge">
-          {chatMsgs.length} message{chatMsgs.length !== 1 ? "s" : ""}
+        <span className="panel-count">
+          {msgCount} message(s), {textPartCount} text part(s)
         </span>
-        {round.output && (
-          <span className="panel-badge badge-green">has output</span>
-        )}
       </div>
       <div className="panel-scroll">
-        {chatMsgs.length === 0 && !round.output && (
-          <div className="panel-empty">No chat messages in this round</div>
+        {chatItems.length === 0 && (
+          <div className="panel-empty">No chat messages</div>
         )}
 
-        {chatMsgs.map((msg, i) => {
-          const textParts = msg.parts.filter((p) => p.type === "text" && p.text)
-          if (textParts.length === 0) return null
-          return (
-            <div key={i} className={`chat-bubble chat-${msg.role}`}>
-              <div className="chat-bubble-header">
-                <span className={`chat-role role-${msg.role}`}>
-                  {msg.role.toUpperCase()}
-                </span>
-              </div>
-              <div className="chat-bubble-body">
-                {textParts.map((p, j) => (
-                  <div key={j} className="chat-text-part">
-                    <MarkdownView content={p.text ?? ""} />
-                  </div>
-                ))}
-              </div>
+        {chatItems.map((item, i) => (
+          <div key={i} className="chat-msg">
+            <div className="chat-msg-meta">
+              <span className="chat-msg-icon">
+                {item.role === "user" ? "\u{1F464}" : "\u{1F4CB}"}
+              </span>
+              <span className={`chat-role-tag role-${item.role}`}>
+                {item.role.toUpperCase()}
+              </span>
+              {item.agent && <span className="chat-agent-name">{item.agent}</span>}
             </div>
-          )
-        })}
-
-        {round.output && (
-          <div className="chat-bubble chat-assistant chat-output">
-            <div className="chat-bubble-header">
-              <span className="chat-role role-output">LLM OUTPUT</span>
-              <span className="chat-badge">{round.output.text.length.toLocaleString()} chars</span>
-              <span className="chat-time">{formatTimestamp(round.output.ts)}</span>
-            </div>
-            <div className="chat-bubble-body">
-              <MarkdownView content={round.output.text} />
+            <div className="chat-msg-content">
+              <MarkdownView content={item.text} />
             </div>
           </div>
-        )}
+        ))}
       </div>
     </div>
   )
