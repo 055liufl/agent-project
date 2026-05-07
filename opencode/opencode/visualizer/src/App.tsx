@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react"
-import type { Turn, LogEntry, LLMRound } from "./types"
+import type { Turn, LogEntry, LLMRound, SystemPromptEntry } from "./types"
 import { parseJSONL, groupIntoTurns } from "./parser"
 import Header from "./components/Header"
 import FileListPanel from "./components/FileListPanel"
@@ -72,8 +72,11 @@ export default function App() {
 
   const agentShort = (currentTurn?.agent ?? "").split(" - ").pop() ?? ""
 
-  // === All 3 content panels derive from currentRound ===
-  const systemPrompts = currentRound?.systemPrompt ? [currentRound.systemPrompt] : []
+  // === All 3 content panels derive from current state ===
+  // System Prompts: ALL system_prompt entries from the active file (not per-round)
+  const systemPrompts = allEntries.filter(
+    (e) => e.type === "system_prompt"
+  ) as SystemPromptEntry[]
   const chatItems = buildChatItems(currentTurn, currentRound, agentShort)
   const roundToolCalls = currentRound?.toolCalls ?? []
 
@@ -130,7 +133,7 @@ export default function App() {
 
         <div className="center-panel">
           <SystemPromptPanel
-            key={`sp-${activeFileIdx}-${currentRoundIdx}`}
+            key={`sp-${activeFileIdx}`}
             prompts={systemPrompts}
           />
         </div>
