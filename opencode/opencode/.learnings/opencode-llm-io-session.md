@@ -526,4 +526,24 @@ logs/
 
 ---
 
-*基于 `logs/ses_20201f70fffe7a9sowrtvuze7t/150b5e45.jsonl` 分析 | 2026-05-06*
+---
+
+## 六、可视化查看
+
+本日志可通过 Session Visualizer React App 可视化查看：
+
+```bash
+cd opencode/visualizer && npm run dev
+# 打开 http://localhost:5173，拖放或点击导入 150b5e45.jsonl
+```
+
+Visualizer 会将该文件解析为 1 个 Round，展示：
+- **System Prompts**: 2 prompts（title agent 57c + main agent 43,295c）
+- **Chat History**: USER INPUT「当前有哪些 skills?」+ LLM OUTPUT（skills 列表，Markdown 渲染）
+- **Tool Invocations**: 0 calls
+
+详见 [react-app-design-doc.md](./react-app-design-doc.md)。
+
+---
+
+*基于 `logs/ses_20201f70fffe7a9sowrtvuze7t/150b5e45.jsonl` 分析 | 2026-05-07*

@@ -939,4 +939,24 @@ Prompt构建 █                                                2.8%
 
 ---
 
-*基于 `logs/ses_20201f70fffe7a9sowrtvuze7t/4efc0886.jsonl` 分析 | 2026-05-06*
+---
+
+## 六、可视化查看
+
+本日志可通过 Session Visualizer React App 可视化查看：
+
+```bash
+cd opencode/visualizer && npm run dev
+# 打开 http://localhost:5173，拖放或点击导入 4efc0886.jsonl
+```
+
+Visualizer 会将该文件解析为 3 个 Round，通过 ◀▶ 导航切换：
+- **Round 1**: System Prompt + USER INPUT + 1 tool call（read 目录）
+- **Round 2**: System Prompt + USER INPUT + 3 tool calls（read shell.ts/read.ts/edit.ts）
+- **Round 3**: System Prompt + USER INPUT + LLM OUTPUT（工具总结，Markdown 渲染）
+
+详见 [react-app-design-doc.md](./react-app-design-doc.md)。
+
+---
+
+*基于 `logs/ses_20201f70fffe7a9sowrtvuze7t/4efc0886.jsonl` 分析 | 2026-05-07*

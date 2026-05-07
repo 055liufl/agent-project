@@ -291,4 +291,22 @@ for turn_id, events in session.items():
 
 ---
 
-*文档更新时间：2026-05-05*
+---
+
+## 可视化查看
+
+除命令行和 Python 脚本外，还可通过 Session Visualizer React App 图形化查看日志：
+
+```bash
+cd opencode/visualizer && npm install && npm run dev
+# 打开 http://localhost:5173（或 http://192.168.75.129:5173 远端访问）
+# 拖放或点击导入 logs/{sessionID}/{turnID}.jsonl 文件
+```
+
+支持多文件同时加载、Round 导航、System Prompt 折叠、Chat History Markdown 渲染、Tool 调用 JSON/XML 语法高亮。
+
+详见 [react-app-design-doc.md](./react-app-design-doc.md)。
+
+---
+
+*文档更新时间：2026-05-07*
