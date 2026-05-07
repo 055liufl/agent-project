@@ -11,6 +11,8 @@ export interface ChatItem {
   role: "user" | "assistant"
   agent: string
   text: string
+  /** "input" = real user input this turn, "output" = LLM output this turn, "context" = system-injected history */
+  source: "input" | "output" | "context"
 }
 
 interface LoadedFile {
@@ -27,19 +29,18 @@ function buildChatItems(
   if (!turn) return []
   const items: ChatItem[] = []
 
-  // 1. User input — always from this turn's own user_message (NOT the
-  //    cumulative messages snapshot which includes prior turns' history)
+  // 1. This turn's own user input (from user_message entry, NOT messages snapshot)
   if (turn.userMessage) {
     const text = turn.userMessage.parts
       .filter((p) => p.type === "text" && p.text)
       .map((p) => p.text)
       .join("\n\n")
-    if (text) items.push({ role: "user", agent: agentShort, text })
+    if (text) items.push({ role: "user", agent: agentShort, text, source: "input" })
   }
 
-  // 2. Assistant output — only if the current round produced final text
+  // 2. This turn's own LLM output (only when current round produced it)
   if (round?.output) {
-    items.push({ role: "assistant", agent: agentShort, text: round.output.text })
+    items.push({ role: "assistant", agent: agentShort, text: round.output.text, source: "output" })
   }
 
   return items
@@ -78,7 +79,8 @@ export default function App() {
     (e) => e.type === "system_prompt"
   ) as SystemPromptEntry[]
   const chatItems = buildChatItems(currentTurn, currentRound, agentShort)
-  const roundToolCalls = currentRound?.toolCalls ?? []
+  // Tool Invocations: ALL tool calls from ALL rounds in the file
+  const allToolCalls = allRounds.flatMap((r) => r.toolCalls)
 
   // === File management ===
   const handleAddFile = useCallback((name: string, content: string) => {
@@ -144,8 +146,8 @@ export default function App() {
             chatItems={chatItems}
           />
           <ToolInvocationsPanel
-            key={`ti-${activeFileIdx}-${currentRoundIdx}`}
-            toolCalls={roundToolCalls}
+            key={`ti-${activeFileIdx}`}
+            toolCalls={allToolCalls}
           />
         </div>
       </main>
