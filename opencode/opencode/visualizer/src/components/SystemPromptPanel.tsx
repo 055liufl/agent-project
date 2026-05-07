@@ -1,5 +1,6 @@
 import { useState } from "react"
 import type { SystemPromptEntry } from "../types"
+import MarkdownView from "./MarkdownView"
 
 interface Props {
   prompts: SystemPromptEntry[]
@@ -24,6 +25,7 @@ export default function SystemPromptPanel({ prompts }: Props) {
         {prompts.map((sp, i) => {
           const chars = sp.system.reduce((s, t) => s + t.length, 0)
           const isOpen = expandedIdx === i
+          const raw = sp.system.join("\n\n---\n\n")
           return (
             <div key={i} className="prompt-item">
               <button className="prompt-header" onClick={() => toggle(i)}>
@@ -33,7 +35,7 @@ export default function SystemPromptPanel({ prompts }: Props) {
               </button>
               {isOpen && (
                 <div className="prompt-body">
-                  <pre className="code-block">{sp.system.join("\n\n---\n\n")}</pre>
+                  <MarkdownView content={raw} />
                 </div>
               )}
             </div>

@@ -1,6 +1,7 @@
 import { useState } from "react"
 import type { ToolCall } from "../types"
 import { formatTimestamp, calcDuration } from "../parser"
+import { CodeBlockView } from "./MarkdownView"
 
 interface Props {
   toolCalls: ToolCall[]
@@ -44,16 +45,20 @@ export default function ToolInvocationsPanel({ toolCalls }: Props) {
                 <div className="tool-detail">
                   <div className="tool-section">
                     <div className="tool-section-label">ARGS</div>
-                    <pre className="code-block tool-code">
-                      {JSON.stringify(tc.args, null, 2)}
-                    </pre>
+                    <CodeBlockView
+                      content={JSON.stringify(tc.args, null, 2)}
+                      language="json"
+                    />
                   </div>
                   {tc.after && (
                     <div className="tool-section">
-                      <div className="tool-section-label">RESULT — {tc.after.result.title}</div>
-                      <pre className="code-block tool-code tool-result-code">
-                        {tc.after.result.output}
-                      </pre>
+                      <div className="tool-section-label">
+                        RESULT — {tc.after.result.title}
+                      </div>
+                      <CodeBlockView
+                        content={tc.after.result.output}
+                        language="xml"
+                      />
                     </div>
                   )}
                 </div>
